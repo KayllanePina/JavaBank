@@ -31,6 +31,9 @@ public abstract class Cliente {
         this.endereco = endereco;
     }
 
+    public void deposita(double operacao) {
+    }
+
     @Override
     public String toString() {
         return "Cliente{" +

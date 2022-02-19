@@ -1,19 +1,12 @@
 package br.com.JavaBank;
 
 import br.com.JavaBank.Clientes.Cliente;
+import br.com.JavaBank.Clientes.ClientePJ;
 
 public class Conta {
     protected double saldo;
     protected Cliente titular;
-
-
-    public Conta() {
-    }
-
-    public Conta(double saldo, Cliente titular) {
-        this.saldo = saldo;
-        this.titular = titular;
-    }
+    protected double valor;
 
     public double getSaldo() {
         return saldo;
@@ -31,35 +24,79 @@ public class Conta {
         this.titular = titular;
     }
 
-    //Sacar
-    public boolean saque(double valor) {
-        if (titular.getTipoDeRegistro() == "cnpj") {
-            if (this.saldo >= valor) {
-                double taxa = 0.05;
-                double operacao = (this.saldo -= valor) * taxa;
-                double saldoAtual = this.saldo - operacao;
-                System.out.println("O saldo atual da sua conta é " + saldoAtual);
-                return true;
+    public double getSaque(){
+        double operacao = this.saldo -= this.valor;
+        double saldoAtual;
+        if(titular instanceof ClientePJ){
+            if(this.saldo >= this.valor){
+                saldoAtual = this.saldo - (operacao * 0.05);
+                return saldoAtual;
             } else {
                 System.out.println("Valor inválido");
-                return false;
             }
+        } else{
+            if(this.saldo >= this.valor){
+                return operacao;
+            } else {
+                System.out.println("Valor inválido");
+            }
+        }
+        return 0;
+    }
 
+    public void setSaque(double valor){
+        this.valor = valor;
+    }
+
+    public double getDeposito() {
+        return this.saldo + this.valor;
+    }
+
+    public void setDeposito(double valor) {
+        this.valor = valor;
+    }
+
+    public double getInvestir(){
+        if(titular instanceof ClientePJ){
+            return (this.saldo + this.valor) * 1.02;
         } else {
-            if (this.saldo >= valor) {
-                double operacao = (this.saldo -= valor);
-                System.out.println("O saldo atual da sua conta é " + operacao);
-                return true;
-            } else {
-                System.out.println("Valor inválido");
-                return false;
-            }
+            return this.saldo + this.valor;
         }
     }
 
-    //Funcionalidades
-    /*
-     * Depositar
-     * Transferir
-     * Investir*/
+    public void setInvestir(double valor){
+        this.valor = valor;
+    }
+
+    public void deposita(double valor){
+        this.saldo = saldo + valor;
+    }
+
+    public double getTransferir(double valor, Cliente destino) {
+        double operacao = this.saldo -= this.valor;
+        double saldoAtual = this.saldo - operacao;
+        if(titular instanceof ClientePJ){
+            if(this.saldo >= this.valor){
+                saldoAtual = this.saldo - (operacao * 0.05);
+                destino.deposita(operacao);
+                System.out.println("Transferencia concluida com sucesso.");
+            } else{
+                System.out.println("Valor inválido");
+            }
+        } else {
+            if(this.saldo >= this.valor){
+                saldoAtual = operacao;
+                destino.deposita(this.valor);
+                System.out.println("Transferencia concluida com sucesso");
+            } else {
+                System.out.println("Valor inválido");
+            }
+        }
+        return saldoAtual;
+    }
+
+    public void setTransferir(double valor){
+        this.valor = valor;
+    }
+
 }
